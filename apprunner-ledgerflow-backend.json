@@ -11,7 +11,7 @@
         "ConfigurationSource": "REPOSITORY",
         "CodeConfigurationValues": {
           "Runtime": "PYTHON_3",
-          "BuildCommand": "pip install -r backends/requirements.txt",
+          "BuildCommand": "pip install -r backend/requirements.txt",
           "StartCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
           "Port": "8000",
           "RuntimeEnvironmentVariables": {
