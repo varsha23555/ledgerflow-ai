@@ -2,6 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, status
 from .routes import invoice, forecast, health, auth, dashboard
 from .db import init_db
 
@@ -15,10 +16,12 @@ if os.path.isdir(build_dir):
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
         index_file = os.path.join(build_dir, "index.html")
-        if os.path.isfile(index_file):
+        if os.path.isdir(build_dir) and os.path.isfile(index_file):
             from fastapi.responses import FileResponse
             return FileResponse(index_file)
-        return {"error": "index.html not found, build the React app first"}
+    
+    # Return a clean 200 OK text message so AWS health checks pass if they hit "/"
+        return {"status": "backend_running", "message": "React frontend build not found"}
 else:
     # If no build dir, just proceed with API routes
     pass
