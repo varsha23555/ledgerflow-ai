@@ -1,5 +1,5 @@
 {
-  "ServiceName": "ledgerflow-ai-backend",
+"ServiceName": "ledgerflow-ai-backend",
   "SourceConfiguration": {
     "CodeRepository": {
       "RepositoryUrl": "https://github.com/varsha23555/ledgerflow-ai",
@@ -12,10 +12,14 @@
         "CodeConfigurationValues": {
           "Runtime": "PYTHON_3",
           "BuildCommand": "pip install -r backend/requirements.txt",
-          "StartCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+          "StartCommand": "uvicorn app.main:app --host 0.0.0.0 --port $PORT",
           "Port": "8000",
           "RuntimeEnvironmentVariables": {
-            "DATABASE_URL": "sqlite:///./ledgerflow.db"
+            "DATABASE_URL": "${DATABASE_URL}",
+            "SECRET_KEY": "ledgerflow-secret",
+            "FRONTEND_ORIGIN": "https://ledgerflow-ai-frontend.us-east-1.awsapprunner.com",
+            "REACT_BUILD_DIR": "/app/build",
+            "AWS_DEFAULT_REGION": "us-east-1"
           }
         }
       },
@@ -36,4 +40,3 @@
     }
   }
 }
-</arg_value></tool_call>

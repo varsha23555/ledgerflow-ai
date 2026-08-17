@@ -8,9 +8,9 @@ from .db import init_db
 
 app = FastAPI(title="LedgerFlow AI", version="0.1.0")
 
-# Serve React static files from the build directory
-build_dir = os.getenv("REACT_BUILD_DIR", "/app/build")
-if os.path.isdir(build_dir):
+# Serve React static files from the build directory (set via REACT_BUILD_DIR env var)
+build_dir = os.getenv("REACT_BUILD_DIR")
+if build_dir and os.path.isdir(build_dir):
     app.mount("/static", StaticFiles(directory=build_dir), name="static")
     # Add catch-all route to serve index.html for SPA routing
     @app.get("/{full_path:path}")
@@ -19,18 +19,22 @@ if os.path.isdir(build_dir):
         if os.path.isdir(build_dir) and os.path.isfile(index_file):
             from fastapi.responses import FileResponse
             return FileResponse(index_file)
-    
+        # If no index.html found, return 404
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=404, content={"detail": "Not found"})
+
     # Return a clean 200 OK text message so AWS health checks pass if they hit "/"
-        return {"status": "backend_running", "message": "React frontend build not found"}
+    return {"status": "backend_running", "message": "React frontend build active"}
 else:
     # If no build dir, just proceed with API routes
     pass
 
-frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
+# Allow all origins for development; restrict in production via FRONTEND_ORIGIN env var
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "*")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[frontend_origin] if frontend_origin != "*" else ["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

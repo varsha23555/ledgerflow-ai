@@ -1,5 +1,5 @@
 {
-  "ServiceName": "ledgerflow-ai-frontend-apprunner",
+"ServiceName": "ledgerflow-ai-frontend-apprunner",
   "SourceConfiguration": {
     "CodeRepository": {
       "RepositoryUrl": "https://github.com/varsha23555/ledgerflow-ai",
@@ -12,12 +12,16 @@
         "CodeConfigurationValues": {
           "Runtime": "NODEJS_18",
           "BuildCommand": "npm install && npm run build",
-          "StartCommand": "npx serve -s dist -l 3000",
+          "StartCommand": "npx serve -s dist -l $PORT",
           "Port": "3000",
           "EnvironmentVariables": [
             {
               "Name": "VITE_API_URL",
               "Value": "https://ledgerflow-ai-backend.us-east-1.awsapprunner.com"
+            },
+            {
+              "Name": "NODE_ENV",
+              "Value": "production"
             }
           ]
         }
@@ -42,5 +46,3 @@
     }
   }
 }
-</arg_value>
-</write_to_file>
