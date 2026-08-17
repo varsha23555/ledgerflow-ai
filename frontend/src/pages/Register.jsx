@@ -1,12 +1,10 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
-
-export default function RegisterPage() {
-  const router = useRouter();
+export default function Register() {
+  const navigate = useNavigate();
+  const { register } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,41 +32,7 @@ export default function RegisterPage() {
     return true;
   };
 
-  const formatError = (result: any) => {
-    if (!result) {
-      return "Registration failed. Please try again.";
-    }
-
-    if (typeof result === "string") {
-      return result;
-    }
-
-    if (Array.isArray(result)) {
-      return result
-        .map((item) => (typeof item === "string" ? item : item.msg || JSON.stringify(item)))
-        .join(" ");
-    }
-
-    if (typeof result.detail === "string") {
-      return result.detail;
-    }
-
-    if (Array.isArray(result.detail)) {
-      return result.detail.map((item: any) => item.msg || JSON.stringify(item)).join(" ");
-    }
-
-    if (typeof result.error === "string") {
-      return result.error;
-    }
-
-    if (result.message) {
-      return String(result.message);
-    }
-
-    return JSON.stringify(result);
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -79,23 +43,10 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        setError(formatError(result));
-        return;
-      }
-
-      router.push("/auth/login");
+      await register(name, email, password);
+      navigate("/login");
     } catch (err) {
-      setError("Unable to register at this time. Please try again.");
+      setError(err.message || "Unable to register at this time. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -162,6 +113,13 @@ export default function RegisterPage() {
             {loading ? "Creating account..." : "Register"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-slate-400">
+          Already have an account?{" "}
+          <Link to="/login" className="font-semibold text-cyan-300 hover:text-cyan-200">
+            Login
+          </Link>
+        </p>
       </section>
     </main>
   );

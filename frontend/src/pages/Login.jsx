@@ -1,12 +1,10 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
-
-export default function LoginPage() {
-  const router = useRouter();
+export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +22,7 @@ export default function LoginPage() {
     return true;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -35,24 +33,10 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ username: email, password }),
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        setError(result.detail || "Login failed. Please check your credentials.");
-        return;
-      }
-
-      localStorage.setItem("ledgerflow_token", result.access_token);
-      router.push("/");
+      await login(email, password);
+      navigate("/");
     } catch (err) {
-      setError("Unable to login at this time. Please try again.");
+      setError(err.message || "Unable to login at this time. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,6 +81,13 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-slate-400">
+          Don't have an account?{" "}
+          <Link to="/register" className="font-semibold text-cyan-300 hover:text-cyan-200">
+            Register
+          </Link>
+        </p>
       </section>
     </main>
   );

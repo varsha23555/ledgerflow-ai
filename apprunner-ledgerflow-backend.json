@@ -1,0 +1,39 @@
+{
+  "ServiceName": "ledgerflow-ai-backend",
+  "SourceConfiguration": {
+    "CodeRepository": {
+      "RepositoryUrl": "https://github.com/varsha23555/ledgerflow-ai",
+      "SourceCodeVersion": {
+        "Type": "BRANCH",
+        "Value": "master"
+      },
+      "CodeConfiguration": {
+        "ConfigurationSource": "REPOSITORY",
+        "CodeConfigurationValues": {
+          "Runtime": "PYTHON_3",
+          "BuildCommand": "pip install -r backends/requirements.txt",
+          "StartCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000",
+          "Port": "8000",
+          "RuntimeEnvironmentVariables": {
+            "DATABASE_URL": "sqlite:///./ledgerflow.db"
+          }
+        }
+      },
+      "SourceDirectory": "backend"
+    },
+    "AutoDeploymentsEnabled": true
+  },
+  "InstanceConfiguration": {
+    "Cpu": "1024",
+    "Memory": "2048"
+  },
+  "NetworkConfiguration": {
+    "IngressConfiguration": {
+      "IsPubliclyAccessible": true
+    },
+    "EgressConfiguration": {
+      "EgressType": "DEFAULT"
+    }
+  }
+}
+</arg_value></tool_call>

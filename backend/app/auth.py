@@ -2,9 +2,11 @@ import hashlib
 import hmac
 import os
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional
 
 import jwt
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
@@ -14,9 +16,14 @@ from .db import get_db
 from .models import User
 from .schemas import TokenData
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-if not SECRET_KEY:
-    raise RuntimeError("Missing required SECRET_KEY environment variable")
+project_root = Path(__file__).resolve().parents[2]
+for env_path in (project_root / ".env", Path.cwd() / ".env"):
+    if env_path.exists():
+        load_dotenv(env_path, override=False)
+
+SECRET_KEY = os.getenv("SECRET_KEY") or "ledgerflow-secret"
+os.environ["SECRET_KEY"] = SECRET_KEY
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
