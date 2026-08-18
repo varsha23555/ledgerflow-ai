@@ -29,7 +29,7 @@
       "SourceDirectory": "frontend"
     },
     "AuthenticationConfiguration": {
-      "ConnectionArn": "arn:aws:apprunner:us-east-1:929453768266:connection/sift-github-connection/f2a76e07cde7445781367cac110feec5"
+      "ConnectionArn": "arn:aws:apprunner:us-east-1:929453768266:connection/sift-github-connection/f2a76e07cde74457881367cac110feec5"
     },
     "AutoDeploymentsEnabled": true
   },
