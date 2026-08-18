@@ -24,7 +24,7 @@ if build_dir and os.path.isdir(build_dir):
         return JSONResponse(status_code=404, content={"detail": "Not found"})
 
     # Return a clean 200 OK text message so AWS health checks pass if they hit "/"
-    return {"status": "backend_running", "message": "React frontend build active"}
+        return {"status": "backend_running", "message": "React frontend build active"}
 else:
     # If no build dir, just proceed with API routes
     pass
