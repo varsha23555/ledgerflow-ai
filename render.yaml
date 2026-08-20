@@ -31,7 +31,7 @@ services:
     runtime: static
     plan: free
     buildCommand: npm install && npm run build
-    publishPath: ./frontend/dist
+    staticPublishPath: ./frontend/dist
     autoDeploy: true
     envVars:
       - key: NEXT_PUBLIC_API_URL
@@ -45,7 +45,7 @@ services:
           type: web
           property: host
 
-# Database service (PostgreSQL) - This must be completely separated from the services list
+# Database service (PostgreSQL)
 databases:
   - name: ledgerflow-db
     plan: free
