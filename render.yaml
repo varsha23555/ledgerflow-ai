@@ -7,11 +7,7 @@ services:
     dockerfilePath: ./backend/Dockerfile
     # Set the port from environment variable (Render sets PORT automatically)
     # The Dockerfile already defaults to 8000 and respects PORT env var
-    healthCheck:
-      httpPath: /health
-      interval: 30s
-      timeout: 5s
-      retries: 3
+    healthCheckPath: /health
     envVars:
       # Production environment variables - these should be set in the Render dashboard
       # or via a .env file in the repository
