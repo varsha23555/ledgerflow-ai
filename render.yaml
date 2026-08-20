@@ -2,7 +2,7 @@ services:
   # Backend: FastAPI service using Docker
   - type: web
     name: ledgerflow-backend
-    env: docker
+    runtime: docker
     plan: free
     dockerfilePath: ./backend/Dockerfile
     # Set the port from environment variable (Render sets PORT automatically)
@@ -43,10 +43,10 @@ services:
   # Frontend: React static site served via Render
   - type: web
     name: ledgerflow-frontend
-    env: static
+    runtime: static
     plan: free
     buildCommand: npm install && npm run build
-    publishDir: ./frontend/dist
+    staticPublishPath: ./frontend/dist
     # Set the port Render expects for static sites
     # Render sets PORT env var automatically for static sites
     envVars:
@@ -63,8 +63,7 @@ services:
     # Auto-deploy on push
     autoDeploy: true
 
-# Database service (PostgreSQL recommended for production, SQLite for free tier)
+# Database service (PostgreSQL)
 databases:
   - name: ledgerflow-db
-    type: postgresql
     plan: free
