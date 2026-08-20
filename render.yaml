@@ -1,0 +1,70 @@
+services:
+  # Backend: FastAPI service using Docker
+  - type: web
+    name: ledgerflow-backend
+    env: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    # Set the port from environment variable (Render sets PORT automatically)
+    # The Dockerfile already defaults to 8000 and respects PORT env var
+    healthCheck:
+      httpPath: /health
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    envVars:
+      # Production environment variables - these should be set in the Render dashboard
+      # or via a .env file in the repository
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ledgerflow-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLAUDE_API_URL
+        sync: false
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: ledgerflow-frontend
+          type: http
+          property: publicUrl
+      - key: BACKEND_URL
+        fromService:
+          name: ledgerflow-frontend
+          type: http
+          property: publicUrl
+    # Auto-deploy on push
+    autoDeploy: true
+
+  # Frontend: React static site served via Render
+  - type: static
+    name: ledgerflow-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    publishDir: ./frontend/dist
+    # Set the port Render expects for static sites
+    # Render sets PORT env var automatically for static sites
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          name: ledgerflow-backend
+          type: http
+          property: url
+      - key: BACKEND_URL
+        fromService:
+          name: ledgerflow-backend
+          type: http
+          property: url
+    # Auto-deploy on push
+    autoDeploy: true
+
+# Database service (PostgreSQL recommended for production, SQLite for free tier)
+databases:
+  - name: ledgerflow-db
+    type: postgresql
+    plan: free
