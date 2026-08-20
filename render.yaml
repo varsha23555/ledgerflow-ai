@@ -24,15 +24,9 @@ services:
       - key: CLAUDE_API_URL
         sync: false
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          name: ledgerflow-frontend
-          type: http
-          property: publicUrl
+        sync: false
       - key: BACKEND_URL
-        fromService:
-          name: ledgerflow-frontend
-          type: http
-          property: publicUrl
+        sync: false
     # Auto-deploy on push
     autoDeploy: true
 
@@ -46,16 +40,17 @@ services:
     # Set the port Render expects for static sites
     # Render sets PORT env var automatically for static sites
     envVars:
+      # Public URL of the backend service, derived from its Render hostname
       - key: NEXT_PUBLIC_API_URL
         fromService:
           name: ledgerflow-backend
-          type: http
-          property: url
+          type: web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
       - key: BACKEND_URL
         fromService:
           name: ledgerflow-backend
-          type: http
-          property: url
+          type: web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
     # Auto-deploy on push
     autoDeploy: true
 
