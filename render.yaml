@@ -41,7 +41,7 @@ services:
     autoDeploy: true
 
   # Frontend: React static site served via Render
-  - type: static
+  - type: web
     name: ledgerflow-frontend
     env: static
     plan: free
