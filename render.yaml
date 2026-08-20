@@ -5,12 +5,9 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./backend/Dockerfile
-    # Set the port from environment variable (Render sets PORT automatically)
-    # The Dockerfile already defaults to 8000 and respects PORT env var
     healthCheckPath: /health
+    autoDeploy: true
     envVars:
-      # Production environment variables - these should be set in the Render dashboard
-      # or via a .env file in the repository
       - key: DATABASE_URL
         fromDatabase:
           name: ledgerflow-db
@@ -27,8 +24,6 @@ services:
         sync: false
       - key: BACKEND_URL
         sync: false
-    # Auto-deploy on push
-    autoDeploy: true
 
   # Frontend: React static site served via Render
   - type: web
@@ -36,25 +31,21 @@ services:
     runtime: static
     plan: free
     buildCommand: npm install && npm run build
-    staticPublishPath: ./frontend/dist
-    # Set the port Render expects for static sites
-    # Render sets PORT env var automatically for static sites
+    publishPath: ./frontend/dist
+    autoDeploy: true
     envVars:
-      # Public URL of the backend service, derived from its Render hostname
       - key: NEXT_PUBLIC_API_URL
         fromService:
           name: ledgerflow-backend
           type: web
-          envVarKey: RENDER_EXTERNAL_HOSTNAME
+          property: host
       - key: BACKEND_URL
         fromService:
           name: ledgerflow-backend
           type: web
-          envVarKey: RENDER_EXTERNAL_HOSTNAME
-    # Auto-deploy on push
-    autoDeploy: true
+          property: host
 
-# Database service (PostgreSQL)
+# Database service (PostgreSQL) - This must be completely separated from the services list
 databases:
   - name: ledgerflow-db
     plan: free
